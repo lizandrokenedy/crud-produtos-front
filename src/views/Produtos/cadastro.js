@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import Erro from '../../components/Alerts/Erro'
 import Sucesso from '../../components/Alerts/Sucesso'
+import Card from '../../components/Card'
 import ProdutoService from '../../services/ProdutoService'
 
 class CadastroProduto extends Component {
@@ -35,17 +36,18 @@ class CadastroProduto extends Component {
             this.limpar();
         } catch (erro) {
             const erros = erro.errors;
-
             this.setState({ erros: erros });
         }
     }
 
-
     componentDidMount() {
+        this.limpar();
         this.obterProduto();
     }
 
     obterProduto() {
+        this.setState({ erros: [] });
+
         const sku = this.props.match.params.sku
 
         if (sku) {
@@ -69,83 +71,86 @@ class CadastroProduto extends Component {
             descricao: '',
             preco: '',
             fornecedor: '',
+            erros: []
         });
     }
 
     render() {
         return (
-            <div className="card">
-                <div className="card-header">
-                    {this.state.atualizando ? 'Atualizando Produto' : 'Cadastrando Produto'}
-                </div>
+
+            <Card titulo={this.state.atualizando ? 'Atualizando Produto' : 'Cadastrando Produto'}>
 
                 {this.state.sucesso &&
                     <Sucesso />
                 }
 
-                {this.state.erros.length > 0 &&
+                {this.state.erros.length > 1 &&
                     this.state.erros.map((erro, i) => (
                         <Erro key={i} erro={erro} />
                     ))
                 }
 
-                <div className="card-body">
-                    <div className="row">
-                        <div className="col-md-6">
-                            <div className="form-group">
-                                <label>Nome: *</label>
-                                <input type="text" className="form-control" value={this.state.nome}
-                                    onChange={e => this.setState({ nome: e.target.value })} />
+                <form id='formulario' onSubmit={this.salvar}>
+
+                    <div className="card-body">
+                        <div className="row">
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>Nome: *</label>
+                                    <input type="text" className="form-control" value={this.state.nome}
+                                        onChange={e => this.setState({ nome: e.target.value })} />
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>SKU: *</label>
+                                    <input type="text" readOnly className="form-control" value={this.state.sku} />
+                                </div>
                             </div>
                         </div>
-                        <div className="col-md-6">
-                            <div className="form-group">
-                                <label>SKU: *</label>
-                                <input type="text" readOnly className="form-control" value={this.state.sku} />
+
+                        <div className="row">
+                            <div className="col-md-12">
+                                <div className="form-group">
+                                    <label>Descrição: </label>
+                                    <textarea className="form-control" value={this.state.descricao}
+                                        onChange={e => this.setState({ descricao: e.target.value })} />
+                                </div>
                             </div>
                         </div>
+
+                        <div className="row">
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>Preço: *</label>
+                                    <input type="text" className="form-control" value={this.state.preco}
+                                        onChange={e => this.setState({ preco: e.target.value })} />
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>Fornecedor: *</label>
+                                    <input type="text" className="form-control" value={this.state.fornecedor}
+                                        onChange={e => this.setState({ fornecedor: e.target.value })} />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-1">
+                                <button type="submit" className="btn btn-primary">
+                                    {this.state.atualizando ? 'Atualizar' : 'Salvar'}
+                                </button>
+                            </div>
+                            <div className="col-md-1">
+                                <button onClick={this.limpar} className="btn btn-danger">Limpar</button>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div className="row">
-                        <div className="col-md-12">
-                            <div className="form-group">
-                                <label>Descrição: </label>
-                                <textarea className="form-control" value={this.state.descricao}
-                                    onChange={e => this.setState({ descricao: e.target.value })} />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="row">
-                        <div className="col-md-6">
-                            <div className="form-group">
-                                <label>Preço: *</label>
-                                <input type="text" className="form-control" value={this.state.preco}
-                                    onChange={e => this.setState({ preco: e.target.value })} />
-                            </div>
-                        </div>
-                        <div className="col-md-6">
-                            <div className="form-group">
-                                <label>Fornecedor: *</label>
-                                <input type="text" className="form-control" value={this.state.fornecedor}
-                                    onChange={e => this.setState({ fornecedor: e.target.value })} />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="row">
-                        <div className="col-md-1">
-                            <button onClick={this.salvar} className="btn btn-primary">
-                                {this.state.atualizando ? 'Atualizar' : 'Salvar'}
-                            </button>
-                        </div>
-                        <div className="col-md-1">
-                            <button onClick={this.limpar} className="btn btn-danger">Limpar</button>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
+                </form>
+            </Card>
         )
     }
 }
