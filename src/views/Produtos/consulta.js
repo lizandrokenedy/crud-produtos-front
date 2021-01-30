@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import ProdutoService from '../../services/ProdutoService'
-import { FaPenSquare, FaTrash } from 'react-icons/fa';
 import { withRouter } from 'react-router-dom';
 import Card from '../../components/Card';
+import TabelaProdutos from './TabelaProdutos';
 
 class ConsultaProduto extends Component {
 
@@ -10,12 +10,14 @@ class ConsultaProduto extends Component {
         super(props);
         this.state = {
             produtos: [],
+            erros: []
         }
 
         this.service = new ProdutoService();
 
         this.consultar = this.consultar.bind(this);
         this.editar = this.editar.bind(this);
+        this.excluir = this.excluir.bind(this);
     }
 
     componentDidMount() {
@@ -37,8 +39,8 @@ class ConsultaProduto extends Component {
             this.setState({ produtos: produtosAtualizados });
 
         } catch (erro) {
+            console.log(erro);
             const erros = erro.errors;
-
             this.setState({ erros: erros });
         }
     }
@@ -46,47 +48,12 @@ class ConsultaProduto extends Component {
     render() {
         return (
             <Card titulo="Consultar Produtos">
-                <table className="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Sku</th>
-                            <th>Preço</th>
-                            <th>Fornecedor</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
 
-                    <tbody>
-                        {this.state.produtos.length > 0 ?
-                            this.state.produtos.map((produto, i) => {
-                                return (
-                                    <tr key={i}>
-                                        <td>{produto.nome}</td>
-                                        <td>{produto.sku}</td>
-                                        <td>{produto.preco}</td>
-                                        <td>{produto.fornecedor}</td>
-                                        <td>
-                                            <button onClick={() => this.editar(produto.sku)} className="btn btn-primary btn-sm mr-2">
-                                                <FaPenSquare size={20} />
-                                            </button>
-                                            <button onClick={() => this.excluir(produto.sku)} className="btn btn-danger btn-sm">
-                                                <FaTrash size={20} />
-                                            </button>
-                                        </td>
-
-                                    </tr>
-
-                                )
-                            })
-                            :
-                            <tr>
-                                <td colSpan="5" className="text-center">Nenhum produto encontrado!</td>
-                            </tr>
-                        }
-
-                    </tbody>
-                </table>
+                <TabelaProdutos
+                    produtos={this.state.produtos}
+                    acaoEditar={this.editar}
+                    acaoExcluir={this.excluir}
+                />
 
                 <div className="row">
                     <div className="col-sm-1">

@@ -41,7 +41,6 @@ export default class ProdutoService {
     }
 
     excluir = (sku) => {
-        // console.log(sku)
         let produtos = localStorage.getItem(PRODUTOS);
 
         if (!produtos) {
