@@ -18,5 +18,5 @@ do curso: https://www.udemy.com/course/domine-react-com-redux-2020-bootstrap-mat
 
 ##### O projeto não utiliza um backend, ele salva os dados no LocalStorage do navegador
 
-### Intruções
+### Disponibilizando a aplicação
 Para subir a aplicação, em seu terminal utilize o comando **npm start**
