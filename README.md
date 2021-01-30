@@ -1,4 +1,4 @@
-# Introdução
+# Sobre o Projeto
 
 Este projeto foi desenvolvido com base na **Seção 4:Aplicação CRUD** 
 do curso: https://www.udemy.com/course/domine-react-com-redux-2020-bootstrap-material-ui-e-apis-rest/learn/lecture/17423980#overview
@@ -17,7 +17,6 @@ do curso: https://www.udemy.com/course/domine-react-com-redux-2020-bootstrap-mat
 * Criação de um crud básico
 
 ##### O projeto não utiliza um backend, ele salva os dados no LocalStorage do navegador
-
 
 ### Intruções
 Para subir a aplicação, em seu terminal utilize o comando **npm start**
