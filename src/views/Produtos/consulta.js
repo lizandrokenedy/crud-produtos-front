@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import ProdutoService from '../../services/ProdutoService'
 import { FaPenSquare, FaTrash } from 'react-icons/fa';
+import { withRouter } from 'react-router-dom';
 
-export default class ConsultaProduto extends Component {
+class ConsultaProduto extends Component {
 
     constructor(props) {
         super(props);
@@ -25,8 +26,20 @@ export default class ConsultaProduto extends Component {
         this.setState({ produtos: produtos });
     }
 
-    editar(e) {
-        
+    editar(sku) {
+        this.props.history.push(`/cadastro-produtos/${sku}`)
+    }
+
+    excluir(sku) {
+        try {
+            const produtosAtualizados = this.service.excluir(sku);
+            this.setState({produtos: produtosAtualizados});
+
+        } catch (erro) {
+            const erros = erro.errors;
+
+            this.setState({ erros: erros });
+        }
     }
 
     render() {
@@ -58,10 +71,10 @@ export default class ConsultaProduto extends Component {
                                             <td>{produto.preco}</td>
                                             <td>{produto.fornecedor}</td>
                                             <td>
-                                                <button className="btn btn-primary btn-sm mr-2">
+                                                <button onClick={() => this.editar(produto.sku)} className="btn btn-primary btn-sm mr-2">
                                                     <FaPenSquare size={20} />
                                                 </button>
-                                                <button className="btn btn-danger btn-sm">
+                                                <button onClick={() => this.excluir(produto.sku)} className="btn btn-danger btn-sm">
                                                     <FaTrash size={20} />
                                                 </button>
                                             </td>
@@ -72,7 +85,7 @@ export default class ConsultaProduto extends Component {
                                 })
                                 :
                                 <tr>
-                                    <td colSpan="4" className="text-center">Nenhum produto encontrado!</td>
+                                    <td colSpan="5" className="text-center">Nenhum produto encontrado!</td>
                                 </tr>
                             }
 
@@ -91,3 +104,6 @@ export default class ConsultaProduto extends Component {
         )
     }
 }
+
+
+export default withRouter(ConsultaProduto)

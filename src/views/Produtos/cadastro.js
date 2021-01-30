@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
+import { withRouter } from 'react-router-dom'
 import Erro from '../../components/Alerts/Erro'
 import Sucesso from '../../components/Alerts/Sucesso'
 import ProdutoService from '../../services/ProdutoService'
 
-export default class CadastroProduto extends Component {
+class CadastroProduto extends Component {
 
     constructor(props) {
         super(props)
@@ -14,12 +15,14 @@ export default class CadastroProduto extends Component {
             preco: '',
             fornecedor: '',
             sucesso: false,
-            erros: []
+            erros: [],
+            atualizando: false
         }
         this.service = new ProdutoService();
 
         this.limpar = this.limpar.bind(this)
         this.salvar = this.salvar.bind(this)
+        this.obterProduto = this.obterProduto.bind(this)
     }
 
     salvar(e) {
@@ -37,6 +40,28 @@ export default class CadastroProduto extends Component {
         }
     }
 
+
+    componentDidMount() {
+        this.obterProduto();
+    }
+
+    obterProduto() {
+        const sku = this.props.match.params.sku
+
+        if (sku) {
+            const resultado = this.service.consultar().filter(produto => produto.sku === sku)
+
+            if (resultado.length > 0) {
+                const produto = resultado[0]
+                this.setState({
+                    ...produto, atualizando: true
+                })
+            }
+        } else {
+            this.setState({ sku: Date.now().toString(36) });
+        }
+    }
+
     limpar() {
         this.setState({
             nome: '',
@@ -51,7 +76,7 @@ export default class CadastroProduto extends Component {
         return (
             <div className="card">
                 <div className="card-header">
-                    Cadastro de Produtos
+                    {this.state.atualizando ? 'Atualizando Produto' : 'Cadastrando Produto'}
                 </div>
 
                 {this.state.sucesso &&
@@ -76,8 +101,7 @@ export default class CadastroProduto extends Component {
                         <div className="col-md-6">
                             <div className="form-group">
                                 <label>SKU: *</label>
-                                <input type="text" className="form-control" value={this.state.sku}
-                                    onChange={e => this.setState({ sku: e.target.value })} />
+                                <input type="text" readOnly className="form-control" value={this.state.sku} />
                             </div>
                         </div>
                     </div>
@@ -111,7 +135,9 @@ export default class CadastroProduto extends Component {
 
                     <div className="row">
                         <div className="col-md-1">
-                            <button onClick={this.salvar} className="btn btn-primary">Salvar</button>
+                            <button onClick={this.salvar} className="btn btn-primary">
+                                {this.state.atualizando ? 'Atualizar' : 'Salvar'}
+                            </button>
                         </div>
                         <div className="col-md-1">
                             <button onClick={this.limpar} className="btn btn-danger">Limpar</button>
@@ -123,3 +149,6 @@ export default class CadastroProduto extends Component {
         )
     }
 }
+
+
+export default withRouter(CadastroProduto)

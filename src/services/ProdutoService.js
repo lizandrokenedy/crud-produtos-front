@@ -6,6 +6,19 @@ export function ErroValidacao(errors) {
 }
 
 export default class ProdutoService {
+
+    obterIndex = (sku) => {
+        let index = null;
+        this.consultar().map((produto, i) => {
+            if (produto.sku === sku) {
+                index = i
+                console.log(i);
+            }
+        })
+
+        return index;
+    }
+
     salvar = (produto) => {
         this.validar(produto)
         let produtos = localStorage.getItem(PRODUTOS);
@@ -16,9 +29,33 @@ export default class ProdutoService {
             produtos = JSON.parse(produtos)
         }
 
-        produtos.push(produto);
+        const index = this.obterIndex(produto.sku)
+
+        if (index === null) {
+            produtos.push(produto);
+        } else {
+            produtos[index] = produto;
+        }
 
         localStorage.setItem(PRODUTOS, JSON.stringify(produtos));
+    }
+
+    excluir = (sku) => {
+        // console.log(sku)
+        let produtos = localStorage.getItem(PRODUTOS);
+
+        if (!produtos) {
+            produtos = [];
+        } else {
+            produtos = JSON.parse(produtos)
+        }
+
+        produtos = produtos.filter(produto => produto.sku !== sku);
+
+
+        localStorage.setItem(PRODUTOS, JSON.stringify(produtos));
+
+        return produtos;
     }
 
     validar = (produto) => {
@@ -53,6 +90,7 @@ export default class ProdutoService {
     }
 
     consultar = (pesquisa) => {
-        return JSON.parse(localStorage.getItem(PRODUTOS))
+        const produtos = JSON.parse(localStorage.getItem(PRODUTOS))
+        return produtos ? produtos : []
     }
 }
